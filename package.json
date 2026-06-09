@@ -1,0 +1,72 @@
+{
+  "name": "quick",
+  "version": "1.0.0",
+  "description": "Quick Note Taker - A fast and simple note-taking application",
+  "main": "main.js",
+  "homepage": "./",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux",
+    "pack": "electron-builder --dir",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "note",
+    "notes",
+    "notepad",
+    "text-editor"
+  ],
+  "author": "Your Name",
+  "license": "ISC",
+  "type": "commonjs",
+  "build": {
+    "appId": "com.quicknote.app",
+    "productName": "Quick Note",
+    "directories": {
+      "buildResources": "assets"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer.js",
+      "index.html",
+      "node_modules",
+      "*.png"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Quick Note"
+    }
+  },
+  "devDependencies": {
+    "electron": "^42.0.1",
+    "electron-builder": "^26.15.2"
+  },
+  "dependencies": {
+    "docx": "^9.7.1",
+    "html2pdf.js": "^0.14.0",
+    "pdfkit": "^0.19.0"
+  }
+}
