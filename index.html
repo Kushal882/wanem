@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Quick Note Taker</title>
+    <style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: system-ui; background: var(--bg-primary); height: 100vh; }
+
+
+
+:root {
+  --bg-primary: #f4f4f4;
+  --bg-sidebar: #2b2b2b;
+  --bg-editor: #ffffff;
+  --bg-note-item: #3a3a3a;
+  --bg-note-item-hover: #4a4a4a;
+  --bg-note-item-active: #316357;
+  --text-primary: #000000;
+  --text-sidebar: #ffffff;
+  --text-muted: #999999;
+  --border-color: #cccccc;
+  --button-bg: #316357;
+  --button-hover: #3d7a6b;
+  --text-button: #ffffff;
+  --text-delete: #ff6b6b;
+}
+
+body.dark-mode {
+  --bg-primary: #1e1e1e;
+  --bg-sidebar: #141414;
+  --bg-editor: #252525;
+  --bg-note-item: #2a2a2a;
+  --bg-note-item-hover: #333333;
+  --bg-note-item-active: #316357;
+  --text-primary: #f0f0f0;
+  --text-sidebar: #dddddd;
+  --text-muted: #777777;
+  --border-color: #444444;
+  background: #1e1e1e;
+  color: #f0f0f0;
+}
+
+body.dark-mode #app {
+  background: #1e1e1e;
+}
+
+body.dark-mode #sidebar {
+  background: #141414;
+  color: #dddddd;
+}
+
+body.dark-mode #editor {
+  background: #252525;
+}
+
+body.dark-mode #note-title,
+body.dark-mode textarea,
+body.dark-mode #search {
+  background: #2a2a2a;
+  color: #f0f0f0;
+  border-color: #444444;
+}
+
+body.dark-mode .note-item {
+  background: #2a2a2a;
+}
+
+body.dark-mode .note-item:hover {
+  background: #333333;
+}
+
+body.dark-mode button {
+  color: #ffffff;
+}
+
+#app {
+  display: flex;
+  height: 100vh;
+  background: var(--bg-primary);
+}
+
+#sidebar {
+  width: 220px;
+  background: var(--bg-sidebar );
+  color: var(--text-sidebar);
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  gap: 8px;
+}
+
+#note-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+#editor {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  gap: 10px;
+  background: var(--bg-editor);
+}
+
+#note-title {
+  font-size: 18px;
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-editor);
+  color: var(--text-primary);
+  border-radius: 6px;
+}
+
+textarea {
+  flex: 1;
+  font-size: 16px;
+  padding: 12px;
+  resize: none;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-editor);
+    color: var(--text-primary);
+}
+
+#toolbar {
+  display: flex;
+  gap: 8px;
+}
+button {
+  padding: 8px 12px;
+  font-size: 14px;
+  background: var(--button-bg);
+  color: var(--text-button);
+  border: none;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+button:hover { background: var(--button-hover); }
+
+#new-note { width: 100%; margin-bottom: 6px; }
+
+.note-item {
+  background: var(--bg-note-item);
+  border-radius: 6px;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.note-item:hover { background: var(--bg-note-item-hover); }
+.note-item.active { background: var(--bg-note-item-active); }
+.note-item-title {
+  font-size: 13px;
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.note-item-date { font-size: 11px; color: #aaa; margin-top: 3px; }
+.note-item-delete,
+.note-item-pin {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+.note-item-delete {
+  color: var(--text-delete);
+  float: right;
+  font-size: 14px;
+}
+.note-item-pin {
+  font-size: 12px;
+  float: right;
+  margin-right: 4px;
+  color: #f7d774;
+}
+
+#save_status { font-size: 13px; color: gray; }
+
+#word-count { font-size: 12px; color:#999;}
+
+#search {
+  padding: 7px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-note-item);
+  color: var(--text-sidebar);
+  font-size: 13px;
+  width: 100%;
+}
+
+</style>
+</head>
+<body>
+  <div id="app">
+    <!-- Sidebar -->
+    <div id="sidebar">
+      <button id="new-note">New Note</button>
+      <input type="text" id="search" placeholder="Search notes...">
+      <div id="note-list"></div>
+    </div>
+    <!-- Editor -->
+    <div id="editor">
+      <input type="text" id="note-title" placeholder="Note title...">
+      <textarea id="note" placeholder="Start typing your note..."></textarea>
+      <div id="toolbar">
+        <button id="save">Save</button>
+        <button id="save-as">Save As</button>
+        <button id="open-file">Open File</button>
+        <button id="lock-note">🔓 Lock</button>
+        <button id="font-increase">A+</button>
+        <button id="font-decrease">A-</button>
+        <button id="dark-mode-toggle">Dark mode</button>
+      </div>
+      <p id="save_status"></p>
+      <p id="word-count"> words: 0 | characters: 0</p>
+    </div>
+    </div>
+    <script src="renderer.js"></script>
+</body>
+</html>
